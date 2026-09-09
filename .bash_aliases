@@ -17,13 +17,26 @@ agy-skill-local() {
     [ -d ".git" ] && grep -qxF ".agents/" .git/info/exclude 2>/dev/null || echo ".agents/" >> .git/info/exclude 2>/dev/null || true
 }
 
+# Hàm tìm vị trí thực tế của thư mục dotfiles trên Codespaces hoặc môi trường khác
+_find_dotfiles_dir() {
+    if [ -d "/workspaces/.codespaces/.persistedshare/dotfiles" ]; then
+        echo "/workspaces/.codespaces/.persistedshare/dotfiles"
+    elif [ -d "$HOME/dotfiles" ]; then
+        echo "$HOME/dotfiles"
+    elif [ -d "$HOME/.dotfiles" ]; then
+        echo "$HOME/.dotfiles"
+    fi
+}
+
 # 1-click sync và apply dotfiles tức thì vào Codespace đang chạy
 dot-sync() {
-    local DOT_DIR="$HOME/dotfiles"
-    if [ ! -d "$DOT_DIR" ]; then
-        echo "❌ Không tìm thấy thư mục $DOT_DIR"
+    local DOT_DIR
+    DOT_DIR=$(_find_dotfiles_dir)
+    if [ -z "$DOT_DIR" ] || [ ! -d "$DOT_DIR" ]; then
+        echo "❌ Không tìm thấy thư mục dotfiles trong /workspaces/.codespaces/.persistedshare/dotfiles hoặc ~/dotfiles"
         return 1
     fi
+    echo "==> [Dotfiles] Found dotfiles at: $DOT_DIR"
     echo "==> [Dotfiles] Pulling latest changes from GitHub..."
     (cd "$DOT_DIR" && git pull --rebase)
     echo "==> [Dotfiles] Re-applying configurations..."
@@ -37,5 +50,11 @@ dot-sync() {
 
 # Mở nhanh repo dotfiles trong cửa sổ VS Code hiện tại
 dot-edit() {
-    code "$HOME/dotfiles"
+    local DOT_DIR
+    DOT_DIR=$(_find_dotfiles_dir)
+    if [ -n "$DOT_DIR" ]; then
+        code "$DOT_DIR"
+    else
+        echo "❌ Không tìm thấy thư mục dotfiles."
+    fi
 }

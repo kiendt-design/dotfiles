@@ -3,6 +3,11 @@ set -e
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "==> [Dotfiles] Setting up Antigravity ecosystem for Codespaces..."
 
+# Tạo symlink ~/dotfiles trỏ về thư mục dotfiles thực tế của Codespaces
+if [ "$DOTFILES_DIR" != "$HOME/dotfiles" ] && [ ! -e "$HOME/dotfiles" ]; then
+    ln -sf "$DOTFILES_DIR" "$HOME/dotfiles"
+fi
+
 # Đảm bảo PATH chứa các thư mục nhị phân tiêu chuẩn
 export PATH="$HOME/.local/bin:$HOME/.antigravity/bin:$HOME/.cargo/bin:$PATH"
 
