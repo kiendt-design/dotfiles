@@ -97,9 +97,16 @@ agy-bg() {
 
     local cmd="agy --dangerously-skip-permissions $model_arg -p \"$task\""
 
-    # Script báo cáo kết quả qua Google Chat bằng AI phụ
-    local notify_prompt="Nhiệm vụ: '$task' vừa chạy ngầm hoàn tất. Đọc file log tại $log_file để nắm kết quả cuối cùng. Tóm tắt kết quả thành một đoạn văn ngắn gọn, TUYỆT ĐỐI KHÔNG vượt quá 1500 từ. Sau đó BẮT BUỘC phải dùng MCP tool send_message của google-workspace để gửi báo cáo tóm tắt này qua Google Chat cho tài khoản kiendt@thudomultimedia.com."
-    local notify_script="agy --dangerously-skip-permissions -m flash -p \"$notify_prompt\" > /dev/null 2>&1"
+    # Script báo cáo thông minh: Dưới 1500 từ -> Gửi trực tiếp. Trên 1500 từ -> Tạo Google Doc và gửi link.
+    local notify_script="
+    word_count=\$(wc -w < \"$log_file\" | tr -d ' ')
+    if [ \"\$word_count\" -lt 1500 ]; then
+        notify_prompt=\"Nhiệm vụ: '$task' vừa hoàn tất. Đọc file log tại $log_file và gửi TRỰC TIẾP toàn bộ kết quả qua Google Chat cho email kiendt@thudomultimedia.com bằng tool send_message. KHÔNG CẦN tóm tắt.\"
+    else
+        notify_prompt=\"Nhiệm vụ: '$task' vừa hoàn tất. Nội dung log tại $log_file rất dài. YÊU CẦU: 1. Dùng tool create_doc (và modify_doc_text nếu cần) của google-workspace để tạo 1 Google Doc mới chứa toàn bộ nội dung file $log_file. 2. Dùng tool send_message gửi duy nhất đường link của Google Doc vừa tạo kèm 1-2 dòng mô tả siêu ngắn gọn qua Google Chat cho email kiendt@thudomultimedia.com.\"
+    fi
+    agy --dangerously-skip-permissions -m flash -p \"\$notify_prompt\" > /dev/null 2>&1
+    "
 
     if command -v tmux &> /dev/null; then
         tmux kill-session -t agy-run 2>/dev/null || true
