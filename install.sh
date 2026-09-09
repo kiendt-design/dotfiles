@@ -50,6 +50,7 @@ mkdir -p "$HOME/.gemini/antigravity-cli"
 ln -sf "$DOTFILES_DIR/.gemini/GEMINI.md" "$HOME/.gemini/GEMINI.md"
 ln -sf "$DOTFILES_DIR/.gemini/config/mcp_config.json" "$HOME/.gemini/config/mcp_config.json"
 ln -sf "$DOTFILES_DIR/.gemini/antigravity-cli/settings.json" "$HOME/.gemini/antigravity-cli/settings.json"
+[ -f "$DOTFILES_DIR/.tmux.conf" ] && ln -sf "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 
 # 5. Phục hồi Custom Skills tĩnh
 echo "==> Restoring custom static skills..."

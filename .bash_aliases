@@ -62,3 +62,24 @@ dot-edit() {
         echo "❌ Không tìm thấy thư mục dotfiles."
     fi
 }
+
+# Giao việc cho AI chạy ngầm (Fire & Forget, tắt terminal không chết)
+agy-bg() {
+    if [ -z "$1" ]; then
+        echo "Usage: agy-bg <prompt>"
+        echo "Example: agy-bg 'Viết unit test cho auth module'"
+        return 1
+    fi
+    local task="$*"
+    local log_file="$HOME/agy-task.log"
+    echo "🚀 Đã giao việc cho AI chạy ngầm: '$task'"
+    echo "📝 Theo dõi tiến độ tại: tail -f $log_file"
+
+    if command -v tmux &> /dev/null; then
+        tmux kill-session -t agy-run 2>/dev/null || true
+        tmux new-session -d -s agy-run "agy -p \"$task\" 2>&1 | tee -a \"$log_file\""
+        echo "🔍 Xem màn hình AI đang làm: tmux a -t agy-run"
+    else
+        nohup bash -c "agy -p \"$task\"" > "$log_file" 2>&1 &
+    fi
+}
