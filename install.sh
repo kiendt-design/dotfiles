@@ -3,7 +3,16 @@ set -e
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "==> [Dotfiles] Setting up Antigravity ecosystem for Codespaces..."
 
-# 1. Cài đặt Python `uv` cho Google Workspace MCP
+# Đảm bảo PATH chứa các thư mục nhị phân tiêu chuẩn
+export PATH="$HOME/.local/bin:$HOME/.antigravity/bin:$HOME/.cargo/bin:$PATH"
+
+# 1. Cài đặt Antigravity CLI (agy) nếu chưa có
+if ! command -v agy &> /dev/null; then
+    echo "==> Installing Antigravity CLI (agy)..."
+    curl -fsSL https://antigravity.google/cli/install.sh | bash || true
+fi
+
+# 2. Cài đặt Python `uv` cho Google Workspace MCP
 if ! command -v uvx &> /dev/null; then
     echo "==> Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -18,8 +27,11 @@ if ! command -v rtk &> /dev/null; then
     echo "Requires manual RTK binary setup if not on cargo. Skipping strict install for now..."
 fi
 
-# 3. Inject Bash Aliases
-if ! grep -q "\.bash_aliases" "$HOME/.bashrc"; then
+# 4. Inject PATH và Bash Aliases vào .bashrc
+if ! grep -q "/\.local/bin" "$HOME/.bashrc" 2>/dev/null; then
+    echo 'export PATH="$HOME/.local/bin:$HOME/.antigravity/bin:$HOME/.cargo/bin:$PATH"' >> "$HOME/.bashrc"
+fi
+if ! grep -q "\.bash_aliases" "$HOME/.bashrc" 2>/dev/null; then
     echo "source $HOME/.bash_aliases" >> "$HOME/.bashrc"
 fi
 cp "$DOTFILES_DIR/.bash_aliases" "$HOME/.bash_aliases"
