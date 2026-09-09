@@ -63,23 +63,57 @@ dot-edit() {
     fi
 }
 
-# Giao việc cho AI chạy ngầm với Full Permission (Fire & Forget, tắt terminal không chết)
+# Giao việc cho AI chạy ngầm với Full Permission và tùy chọn Model
+# Cú pháp: agy-bg [-m <model>] <task>
 agy-bg() {
+    local model_arg=""
+    local model_display="Default"
+
+    # Kiểm tra cờ -m hoặc --model
+    if [ "$1" = "-m" ] || [ "$1" = "--model" ]; then
+        if [ -n "$2" ]; then
+            model_arg="--model $2"
+            model_display="$2"
+            shift 2
+        else
+            echo "Usage: agy-bg [-m <model>] <task>"
+            return 1
+        fi
+    fi
+
     if [ -z "$1" ]; then
-        echo "Usage: agy-bg <prompt>"
-        echo "Example: agy-bg 'Viết unit test cho auth module'"
+        echo "Usage: agy-bg [-m <model>] <task>"
+        echo "Ví dụ:"
+        echo "  agy-bg 'Viết unit test cho auth module'"
+        echo "  agy-bg -m pro 'Thiết kế kiến trúc hệ thống OTT'"
+        echo "  agy-bg -m flash 'Sửa lỗi chính tả trong docs'"
         return 1
     fi
+
     local task="$*"
     local log_file="$HOME/agy-task.log"
-    echo "🚀 Đã giao việc cho AI chạy ngầm (Full Permission): '$task'"
+    echo "🚀 Đã giao việc cho AI chạy ngầm [Model: $model_display]: '$task'"
     echo "📝 Theo dõi tiến độ tại: tail -f $log_file"
+
+    local cmd="agy --dangerously-skip-permissions $model_arg -p \"$task\""
 
     if command -v tmux &> /dev/null; then
         tmux kill-session -t agy-run 2>/dev/null || true
-        tmux new-session -d -s agy-run "agy --dangerously-skip-permissions -p \"$task\" 2>&1 | tee -a \"$log_file\""
+        tmux new-session -d -s agy-run "$cmd 2>&1 | tee -a \"$log_file\""
         echo "🔍 Xem màn hình AI đang làm: tmux a -t agy-run"
     else
-        nohup bash -c "agy --dangerously-skip-permissions -p \"$task\"" > "$log_file" 2>&1 &
+        nohup bash -c "$cmd" > "$log_file" 2>&1 &
     fi
 }
+
+# 2 phím tắt siêu nhanh cho Pro (việc khó) và Flash (việc nhanh)
+agy-pro() {
+    [ -z "$1" ] && echo "Usage: agy-pro <task>" && return 1
+    agy-bg -m pro "$*"
+}
+
+agy-flash() {
+    [ -z "$1" ] && echo "Usage: agy-flash <task>" && return 1
+    agy-bg -m flash "$*"
+}
+
