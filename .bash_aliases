@@ -97,12 +97,20 @@ agy-bg() {
 
     local cmd="agy --dangerously-skip-permissions $model_arg -p \"$task\""
 
+    # Script báo cáo kết quả qua chat (Ưu tiên Telegram nếu có, hoặc dùng AI gửi qua Google Chat)
+    local notify_script="
+    if [ -n \"\$TELEGRAM_BOT_TOKEN\" ] && [ -n \"\$TELEGRAM_CHAT_ID\" ]; then
+        curl -s -X POST \"https://api.telegram.org/bot\$TELEGRAM_BOT_TOKEN/sendMessage\" -d chat_id=\"\$TELEGRAM_CHAT_ID\" -d text=\"✅ Done: $task\" > /dev/null
+    else
+        agy --dangerously-skip-permissions -m flash -p \"Task '$task' vừa hoàn thành. Hãy đọc kết quả từ $log_file và BẮT BUỘC dùng MCP tool send_message của google-workspace để nhắn tin báo cáo cho kiendt@thudomultimedia.com\" > /dev/null 2>&1
+    fi"
+
     if command -v tmux &> /dev/null; then
         tmux kill-session -t agy-run 2>/dev/null || true
-        tmux new-session -d -s agy-run "$cmd 2>&1 | tee -a \"$log_file\""
+        tmux new-session -d -s agy-run "$cmd 2>&1 | tee -a \"$log_file\"; bash -c '$notify_script'"
         echo "🔍 Xem màn hình AI đang làm: tmux a -t agy-run"
     else
-        nohup bash -c "$cmd" > "$log_file" 2>&1 &
+        nohup bash -c "$cmd 2>&1 | tee -a \"$log_file\"; bash -c '$notify_script'" > /dev/null 2>&1 &
     fi
 }
 
