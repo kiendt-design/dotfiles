@@ -29,6 +29,7 @@
 ## 4. Google Workspace MCP Routing
 - **Google Sheets:** Extract `<ID>` via `/spreadsheets/d/([a-zA-Z0-9-_]+)` and use `google-workspace` MCP `read_sheet_values`.
 - **Google Docs:** Extract `<ID>` via `/document/d/([a-zA-Z0-9-_]+)` and use `google-workspace` MCP `get_doc_content`.
+- **Google Chat:** Default personal space (Me): `spaces/AAAAk904Sm4`.
 - **Constraints:** Never use web scrapers for Google Workspace URLs.
 - **Default auth:** `user_google_email: "kiendt@thudomultimedia.com"`
 
