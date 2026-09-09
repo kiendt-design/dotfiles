@@ -128,3 +128,54 @@ agy-flash() {
     agy-bg -m flash "$*"
 }
 
+# Đọc nội dung từ task.md để chạy (Tiện lợi khi dùng Web Editor gõ tiếng Việt / paste link)
+# Cú pháp: agy-run [file_path] [-m <model>]
+agy-run() {
+    local file="task.md"
+    local model_arg=""
+
+    if [ "$1" = "-m" ] || [ "$1" = "--model" ]; then
+        model_arg="-m $2"
+        shift 2
+    fi
+
+    if [ -n "$1" ] && [ -f "$1" ]; then
+        file="$1"
+        shift
+    fi
+
+    if [ "$1" = "-m" ] || [ "$1" = "--model" ]; then
+        model_arg="-m $2"
+        shift 2
+    fi
+
+    if [ ! -f "$file" ]; then
+        echo "❌ Không tìm thấy file: $file"
+        echo "💡 Hãy tạo file $file trong editor, gõ tiếng Việt / paste link vào đó rồi chạy lại 'agy-run'."
+        return 1
+    fi
+
+    local content
+    content=$(cat "$file")
+    if [ -z "$content" ]; then
+        echo "❌ File $file đang rỗng. Hãy điền nội dung vào trước khi chạy."
+        return 1
+    fi
+
+    echo "📄 Đang đọc prompt từ '$file'..."
+    if [ -n "$model_arg" ]; then
+        agy-bg $model_arg "$content"
+    else
+        agy-bg "$content"
+    fi
+}
+
+agy-run-pro() {
+    agy-run "$1" -m pro
+}
+
+agy-run-flash() {
+    agy-run "$1" -m flash
+}
+
+
