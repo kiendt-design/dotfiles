@@ -91,9 +91,18 @@ agy-bg() {
     fi
 
     local task="$*"
-    local log_file="$HOME/agy-task.log"
+    
+    # Tạo thư mục log riêng và tự động dọn rác (giữ log trong 7 ngày)
+    mkdir -p "$HOME/agy-logs"
+    find "$HOME/agy-logs" -type f -name "task_*.log" -mtime +7 -delete 2>/dev/null || true
+    
+    local timestamp
+    timestamp=$(date +'%Y%m%d_%H%M%S')
+    local log_file="$HOME/agy-logs/task_$timestamp.log"
+    ln -sf "$log_file" "$HOME/agy-task.log"
+
     echo "🚀 Đã giao việc cho AI chạy ngầm [Model: $model_display]: '$task'"
-    echo "📝 Theo dõi tiến độ tại: tail -f $log_file"
+    echo "📝 Theo dõi tiến độ tại: tail -f ~/agy-task.log"
 
     local cmd="agy --dangerously-skip-permissions $model_arg -p \"$task\""
     local notify_cmd="agy-notify \"$log_file\" 2>/dev/null || $HOME/.gemini/antigravity-cli/agy-notify.sh \"$log_file\""
