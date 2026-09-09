@@ -51,6 +51,12 @@ ln -sf "$DOTFILES_DIR/.gemini/GEMINI.md" "$HOME/.gemini/GEMINI.md"
 ln -sf "$DOTFILES_DIR/.gemini/config/mcp_config.json" "$HOME/.gemini/config/mcp_config.json"
 ln -sf "$DOTFILES_DIR/.gemini/antigravity-cli/settings.json" "$HOME/.gemini/antigravity-cli/settings.json"
 [ -f "$DOTFILES_DIR/.tmux.conf" ] && ln -sf "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
+if [ -f "$DOTFILES_DIR/.gemini/antigravity-cli/agy-notify.sh" ]; then
+    chmod +x "$DOTFILES_DIR/.gemini/antigravity-cli/agy-notify.sh"
+    ln -sf "$DOTFILES_DIR/.gemini/antigravity-cli/agy-notify.sh" "$HOME/.gemini/antigravity-cli/agy-notify.sh"
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$DOTFILES_DIR/.gemini/antigravity-cli/agy-notify.sh" "$HOME/.local/bin/agy-notify"
+fi
 
 # 5. Phục hồi Custom Skills tĩnh
 echo "==> Restoring custom static skills..."
