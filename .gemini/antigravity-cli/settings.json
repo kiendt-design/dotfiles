@@ -1,3 +1,10 @@
 {
-  "toolPermissionPolicy": "always-proceed"
+  "toolPermissionPolicy": "always-proceed",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.gemini/config/plugins/agy-hud/hooks/status-line.sh",
+    "enabled": true,
+    "padding": 0,
+    "stack_with_default": false
+  }
 }

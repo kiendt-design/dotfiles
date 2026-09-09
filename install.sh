@@ -64,13 +64,14 @@ if [ -n "$GWORKSPACE_CREDENTIALS_JSON" ]; then
     echo "$GWORKSPACE_CREDENTIALS_JSON" > "$HOME/.google_workspace_mcp/credentials/kiendt@thudomultimedia.com.json"
 fi
 
-# 8. Tùy chọn cài đặt agy-hud để theo dõi Token
+# 8. Cài đặt agy-hud để theo dõi Token
 if [ ! -d "$HOME/.gemini/config/plugins/agy-hud" ]; then
     echo "==> Installing agy-hud..."
     mkdir -p /tmp/agy-hud-pkg
     curl -fsSL -o /tmp/agy-hud-pkg/agy-hud.tar.gz https://github.com/franksde/agy-hud/releases/latest/download/agy-hud.tar.gz
     tar -xzf /tmp/agy-hud-pkg/agy-hud.tar.gz -C /tmp/agy-hud-pkg/ || true
     agy plugin install /tmp/agy-hud-pkg 2>/dev/null || true
+    chmod +x "$HOME/.gemini/config/plugins/agy-hud/hooks/status-line.sh" 2>/dev/null || true
     rm -rf /tmp/agy-hud-pkg
 fi
 
