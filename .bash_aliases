@@ -29,7 +29,9 @@ dot-sync() {
     echo "==> [Dotfiles] Re-applying configurations..."
     bash "$DOT_DIR/install.sh"
     echo "==> [Dotfiles] Reloading shell environment..."
-    [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc"
+    [ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc" 2>/dev/null || true
+    [ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc" 2>/dev/null || true
+    [ -f "$HOME/.bash_aliases" ] && source "$HOME/.bash_aliases" 2>/dev/null || true
     echo "✅ Dotfiles applied successfully!"
 }
 

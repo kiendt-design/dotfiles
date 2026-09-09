@@ -27,14 +27,15 @@ if ! command -v rtk &> /dev/null; then
     echo "Requires manual RTK binary setup if not on cargo. Skipping strict install for now..."
 fi
 
-# 4. Inject PATH và Bash Aliases vào .bashrc
-if ! grep -q "/\.local/bin" "$HOME/.bashrc" 2>/dev/null; then
-    echo 'export PATH="$HOME/.local/bin:$HOME/.antigravity/bin:$HOME/.cargo/bin:$PATH"' >> "$HOME/.bashrc"
-fi
-if ! grep -q "\.bash_aliases" "$HOME/.bashrc" 2>/dev/null; then
-    echo "source $HOME/.bash_aliases" >> "$HOME/.bashrc"
-fi
-cp "$DOTFILES_DIR/.bash_aliases" "$HOME/.bash_aliases"
+# 3. Inject PATH và Bash Aliases vào .bashrc và .zshrc
+ln -sf "$DOTFILES_DIR/.bash_aliases" "$HOME/.bash_aliases"
+for rc in "$HOME/.bashrc" "$HOME/.zshrc"; do
+    if [ -f "$rc" ] || [ "$rc" = "$HOME/.bashrc" ]; then
+        touch "$rc"
+        grep -q "/\.local/bin" "$rc" 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$HOME/.antigravity/bin:$HOME/.cargo/bin:$PATH"' >> "$rc"
+        grep -q "\.bash_aliases" "$rc" 2>/dev/null || echo '[ -f "$HOME/.bash_aliases" ] && source "$HOME/.bash_aliases"' >> "$rc"
+    fi
+done
 
 # 4. Thiết lập Symlink thư mục cấu hình
 echo "==> Symlinking configurations..."
