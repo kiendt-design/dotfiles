@@ -1,3 +1,7 @@
+# Tự động cấp toàn bộ quyền thực thi cho agy CLI (Bypass confirmation prompts)
+alias agy="agy --dangerously-skip-permissions"
+alias agy-safe="command agy"
+
 # Quản lý Agentic Awesome Skills On-Demand
 agy-skill-add() {
     [ -z "$1" ] && echo "Usage: agy-skill-add <skill-name>" && return 1
