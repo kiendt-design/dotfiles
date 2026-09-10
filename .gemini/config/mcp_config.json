@@ -9,11 +9,6 @@
         "JIRA_URL": "https://thudojsc.atlassian.net"
       }
     },
-    "beeper": {
-      "args": ["-y", "beeperbox", "--stdio"],
-      "command": "npx",
-      "disabled": true
-    },
     "figma": {
       "args": ["-y", "figma-developer-mcp", "--stdio"],
       "command": "npx",
