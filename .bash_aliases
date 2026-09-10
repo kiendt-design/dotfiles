@@ -104,7 +104,8 @@ agy-bg() {
     echo "🚀 Đã giao việc cho AI chạy ngầm [Model: $model_display]: '$task'"
     echo "📝 Theo dõi tiến độ tại: tail -f ~/agy-task.log"
 
-    local cmd="agy --dangerously-skip-permissions $model_arg -p \"$task\""
+    # Tăng giới hạn timeout mặc định (5 phút) lên 60 phút để xử lý các task nặng (tải file, tổng hợp dài)
+    local cmd="agy --dangerously-skip-permissions --print-timeout 60m $model_arg -p \"$task\""
     local notify_cmd="agy-notify \"$log_file\" 2>/dev/null || $HOME/.gemini/antigravity-cli/agy-notify.sh \"$log_file\""
 
     if command -v tmux &> /dev/null; then
