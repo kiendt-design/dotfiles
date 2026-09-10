@@ -249,7 +249,8 @@ vpn-up() {
     fi
     echo "==> Khởi động OpenVPN ngầm..."
     cd "$HOME/.vpn" && sudo openvpn --config config.ovpn --daemon --log openvpn.log
-    echo "✅ OpenVPN đang chạy. Xem log tại: cat ~/.vpn/openvpn.log"
+    echo "✅ OpenVPN đang chạy. Đang bẻ lái traffic Atlassian (thudojsc.atlassian.net) qua VPN..."
+    echo "📜 Xem log tại: cat ~/.vpn/openvpn.log"
 }
 
 vpn-down() {

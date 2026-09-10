@@ -80,8 +80,8 @@ fi
 
 # 8. Cài đặt và cấu hình OpenVPN tự động
 echo "==> Configuring OpenVPN..."
-if ! command -v openvpn &> /dev/null; then
-    sudo apt-get update -y && sudo apt-get install -y openvpn
+if ! command -v openvpn &> /dev/null || ! command -v dig &> /dev/null; then
+    sudo apt-get update -y && sudo apt-get install -y openvpn dnsutils
 fi
 
 mkdir -p "$HOME/.vpn"
@@ -105,6 +105,25 @@ if [ -n "$OPENVPN_BUNDLE_B64" ]; then
     else
         echo "auth-user-pass creds.txt" >> "$HOME/.vpn/config.ovpn"
     fi
+    
+    # 8.1 Cấu hình Route Hook bẻ lái Atlassian qua VPN (Giải quyết xung đột Gateway)
+    cat << 'EOF' > "$HOME/.vpn/route-up.sh"
+#!/bin/bash
+# Lấy danh sách IP của Atlassian Cloud và ép đi qua giao diện VPN (tun)
+if command -v dig &> /dev/null; then
+    for ip in $(dig +short thudojsc.atlassian.net | grep -E '^[0-9.]+$'); do
+        ip route add "$ip" dev "${dev}" 2>/dev/null || true
+    done
+fi
+EOF
+    chmod +x "$HOME/.vpn/route-up.sh"
+    
+    # Kích hoạt hook trong config
+    if ! grep -q "route-up.sh" "$HOME/.vpn/config.ovpn"; then
+        echo "script-security 2" >> "$HOME/.vpn/config.ovpn"
+        echo "route-up $HOME/.vpn/route-up.sh" >> "$HOME/.vpn/config.ovpn"
+    fi
+    
     rm -f /tmp/vpn_bundle.txt
 fi
 
