@@ -78,7 +78,34 @@ if [ -n "$GWORKSPACE_CREDENTIALS_JSON" ]; then
     echo "$GWORKSPACE_CREDENTIALS_JSON" > "$HOME/.google_workspace_mcp/credentials/kiendt@thudomultimedia.com.json"
 fi
 
-# 8. Cài đặt agy-hud để theo dõi Token
+# 8. Cài đặt và cấu hình OpenVPN tự động
+echo "==> Configuring OpenVPN..."
+if ! command -v openvpn &> /dev/null; then
+    sudo apt-get update -y && sudo apt-get install -y openvpn
+fi
+
+mkdir -p "$HOME/.vpn"
+chmod 700 "$HOME/.vpn"
+
+if [ -n "$OPENVPN_CONFIG_B64" ]; then
+    echo "$OPENVPN_CONFIG_B64" | base64 -d > "$HOME/.vpn/config.ovpn"
+    chmod 600 "$HOME/.vpn/config.ovpn"
+fi
+
+if [ -n "$OPENVPN_USERNAME" ] && [ -n "$OPENVPN_PASSWORD" ]; then
+    echo -e "$OPENVPN_USERNAME\n$OPENVPN_PASSWORD" > "$HOME/.vpn/creds.txt"
+    chmod 600 "$HOME/.vpn/creds.txt"
+    if [ -f "$HOME/.vpn/config.ovpn" ]; then
+        # Nếu có auth-user-pass thì thay thế thành auth-user-pass creds.txt
+        if grep -q "auth-user-pass" "$HOME/.vpn/config.ovpn"; then
+            sed -i 's/auth-user-pass.*/auth-user-pass creds.txt/g' "$HOME/.vpn/config.ovpn"
+        else
+            echo "auth-user-pass creds.txt" >> "$HOME/.vpn/config.ovpn"
+        fi
+    fi
+fi
+
+# 9. Cài đặt agy-hud để theo dõi Token
 if [ ! -d "$HOME/.gemini/config/plugins/agy-hud" ]; then
     echo "==> Installing agy-hud..."
     mkdir -p /tmp/agy-hud-pkg

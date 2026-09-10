@@ -238,3 +238,21 @@ else:
     print('❌ Không tìm thấy MCP: $1')
 "
 }
+
+# ==========================================
+# OpenVPN Config & Management
+# ==========================================
+vpn-up() {
+    if [ ! -f "$HOME/.vpn/config.ovpn" ]; then
+        echo "❌ Không tìm thấy cấu hình VPN. Hãy đảm bảo bạn đã set secret OPENVPN_CONFIG_B64 trên Codespace."
+        return 1
+    fi
+    echo "==> Khởi động OpenVPN ngầm..."
+    cd "$HOME/.vpn" && sudo openvpn --config config.ovpn --daemon --log openvpn.log
+    echo "✅ OpenVPN đang chạy. Xem log tại: cat ~/.vpn/openvpn.log"
+}
+
+vpn-down() {
+    echo "==> Đóng kết nối OpenVPN..."
+    sudo killall openvpn 2>/dev/null || echo "Không có tiến trình OpenVPN nào đang chạy."
+}
