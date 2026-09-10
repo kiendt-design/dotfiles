@@ -1,9 +1,12 @@
 {
   "mcpServers": {
     "atlassian-local": {
-      "args": ["mcp-atlassian"],
-      "command": "uvx",
-      "disabled": true,
+      "command": "bash",
+      "args": [
+        "-c",
+        "HTTPS_PROXY=\"$ATLASSIAN_PROXY_URL\" HTTP_PROXY=\"$ATLASSIAN_PROXY_URL\" uvx mcp-atlassian"
+      ],
+      "disabled": false,
       "env": {
         "CONFLUENCE_URL": "https://thudojsc.atlassian.net/wiki",
         "JIRA_URL": "https://thudojsc.atlassian.net"
