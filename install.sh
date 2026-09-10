@@ -87,22 +87,25 @@ fi
 mkdir -p "$HOME/.vpn"
 chmod 700 "$HOME/.vpn"
 
-if [ -n "$OPENVPN_CONFIG_B64" ]; then
-    echo "$OPENVPN_CONFIG_B64" | base64 -d > "$HOME/.vpn/config.ovpn"
-    chmod 600 "$HOME/.vpn/config.ovpn"
-fi
-
-if [ -n "$OPENVPN_USERNAME" ] && [ -n "$OPENVPN_PASSWORD" ]; then
-    echo -e "$OPENVPN_USERNAME\n$OPENVPN_PASSWORD" > "$HOME/.vpn/creds.txt"
-    chmod 600 "$HOME/.vpn/creds.txt"
-    if [ -f "$HOME/.vpn/config.ovpn" ]; then
-        # Nếu có auth-user-pass thì thay thế thành auth-user-pass creds.txt
-        if grep -q "auth-user-pass" "$HOME/.vpn/config.ovpn"; then
-            sed -i 's/auth-user-pass.*/auth-user-pass creds.txt/g' "$HOME/.vpn/config.ovpn"
-        else
-            echo "auth-user-pass creds.txt" >> "$HOME/.vpn/config.ovpn"
-        fi
+if [ -n "$OPENVPN_BUNDLE_B64" ]; then
+    echo "$OPENVPN_BUNDLE_B64" | base64 -d > /tmp/vpn_bundle.txt
+    
+    # Lấy 2 dòng đầu làm thông tin đăng nhập (User / Pass)
+    sed -n '1p' /tmp/vpn_bundle.txt > "$HOME/.vpn/creds.txt"
+    sed -n '2p' /tmp/vpn_bundle.txt >> "$HOME/.vpn/creds.txt"
+    
+    # Lấy từ dòng 3 đến hết làm nội dung file OVPN
+    sed '1,2d' /tmp/vpn_bundle.txt > "$HOME/.vpn/config.ovpn"
+    
+    chmod 600 "$HOME/.vpn/creds.txt" "$HOME/.vpn/config.ovpn"
+    
+    # Tự động trỏ file config tới file credentials
+    if grep -q "auth-user-pass" "$HOME/.vpn/config.ovpn"; then
+        sed -i 's/auth-user-pass.*/auth-user-pass creds.txt/g' "$HOME/.vpn/config.ovpn"
+    else
+        echo "auth-user-pass creds.txt" >> "$HOME/.vpn/config.ovpn"
     fi
+    rm -f /tmp/vpn_bundle.txt
 fi
 
 # 9. Cài đặt agy-hud để theo dõi Token

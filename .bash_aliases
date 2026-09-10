@@ -244,7 +244,7 @@ else:
 # ==========================================
 vpn-up() {
     if [ ! -f "$HOME/.vpn/config.ovpn" ]; then
-        echo "❌ Không tìm thấy cấu hình VPN. Hãy đảm bảo bạn đã set secret OPENVPN_CONFIG_B64 trên Codespace."
+        echo "❌ Không tìm thấy cấu hình VPN. Hãy đảm bảo bạn đã set secret OPENVPN_BUNDLE_B64 trên Codespace."
         return 1
     fi
     echo "==> Khởi động OpenVPN ngầm..."
