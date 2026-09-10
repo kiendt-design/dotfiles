@@ -179,3 +179,62 @@ agy-run-flash() {
 }
 
 
+
+# ==========================================
+# MCP Config Switcher (Tắt/bật MCP dễ dàng)
+# ==========================================
+mcp-list() {
+    local config="$HOME/.gemini/config/mcp_config.json"
+    if [ ! -f "$config" ]; then
+        echo "❌ Chưa tìm thấy file $config"
+        return 1
+    fi
+    python3 -c "
+import json
+with open('$config') as f:
+    cfg = json.load(f)
+print('==> DANH SÁCH MCP SERVERS:')
+for name, srv in cfg.get('mcpServers', {}).items():
+    status = '🔴 OFF' if srv.get('disabled', False) else '🟢 ON '
+    print(f'  [{status}] {name}')
+"
+}
+
+mcp-on() {
+    [ -z "$1" ] && echo "Cách dùng: mcp-on <server_name>" && return 1
+    local config="$HOME/.gemini/config/mcp_config.json"
+    python3 -c "
+import json, os
+config_file = '$config'
+with open(config_file, 'r') as f:
+    cfg = json.load(f)
+if '$1' in cfg.get('mcpServers', {}):
+    cfg['mcpServers']['$1']['disabled'] = False
+    # write through symlink properly
+    actual_path = os.path.realpath(config_file)
+    with open(actual_path, 'w') as f:
+        json.dump(cfg, f, indent=2)
+    print('🟢 Đã bật MCP: $1')
+else:
+    print('❌ Không tìm thấy MCP: $1')
+"
+}
+
+mcp-off() {
+    [ -z "$1" ] && echo "Cách dùng: mcp-off <server_name>" && return 1
+    local config="$HOME/.gemini/config/mcp_config.json"
+    python3 -c "
+import json, os
+config_file = '$config'
+with open(config_file, 'r') as f:
+    cfg = json.load(f)
+if '$1' in cfg.get('mcpServers', {}):
+    cfg['mcpServers']['$1']['disabled'] = True
+    actual_path = os.path.realpath(config_file)
+    with open(actual_path, 'w') as f:
+        json.dump(cfg, f, indent=2)
+    print('🔴 Đã tắt MCP: $1')
+else:
+    print('❌ Không tìm thấy MCP: $1')
+"
+}
