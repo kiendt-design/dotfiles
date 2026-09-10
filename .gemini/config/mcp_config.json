@@ -4,7 +4,7 @@
       "command": "bash",
       "args": [
         "-c",
-        "HTTPS_PROXY=\"$ATLASSIAN_PROXY_URL\" HTTP_PROXY=\"$ATLASSIAN_PROXY_URL\" uvx mcp-atlassian"
+        "HTTPS_PROXY=\"$ATLASSIAN_PROXY_URL\" HTTP_PROXY=\"$ATLASSIAN_PROXY_URL\" uvx mcp-atlassian --read-only --enabled-tools confluence_get_page,confluence_search,confluence_get_page_children,confluence_get_space_page_tree,jira_get_issue,jira_search,jira_get_all_projects,jira_get_project_issues"
       ],
       "disabled": false,
       "env": {
