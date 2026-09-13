@@ -72,8 +72,32 @@ agy-bg() {
     # Kiểm tra cờ -m hoặc --model
     if [ "$1" = "-m" ] || [ "$1" = "--model" ]; then
         if [ -n "$2" ]; then
-            model_arg="--model $2"
-            model_display="$2"
+            case "$2" in
+                pro|pro-high)
+                    model_arg="--model gemini-3.1-pro-high"
+                    model_display="Gemini 3.1 Pro (High)"
+                    ;;
+                pro-low)
+                    model_arg="--model gemini-3.1-pro-low"
+                    model_display="Gemini 3.1 Pro (Low)"
+                    ;;
+                flash)
+                    model_arg="--model gemini-3.8-flash-medium"
+                    model_display="Gemini 3.8 Flash (Medium)"
+                    ;;
+                flash-high)
+                    model_arg="--model gemini-3.8-flash-high"
+                    model_display="Gemini 3.8 Flash (High)"
+                    ;;
+                flash-low)
+                    model_arg="--model gemini-3.8-flash-low"
+                    model_display="Gemini 3.8 Flash (Low)"
+                    ;;
+                *)
+                    model_arg="--model $2"
+                    model_display="$2"
+                    ;;
+            esac
             shift 2
         else
             echo "Usage: agy-bg [-m <model>] <task>"
