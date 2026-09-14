@@ -66,10 +66,7 @@ if [ -d "$DOTFILES_DIR/.gemini/config/skills" ]; then
     cp -rsf "$DOTFILES_DIR/.gemini/config/skills/"* "$HOME/.gemini/config/skills/" 2>/dev/null || true
 fi
 
-# 6. Tải Base Layer từ Agentic Awesome Skills (AAS)
-echo "==> Downloading Core Base from Agentic Awesome Skills..."
-AAS_CORE_SKILLS="architecture-patterns,code-review-excellence,clean-code-guard,api-security-best-practices,threat-modeling-expert,brainstorming,writing-plans"
-npx --yes agentic-awesome-skills --path "$HOME/.gemini/config/skills" --skills "$AAS_CORE_SKILLS"
+
 
 # 7. Phục hồi vĩnh viễn Google Workspace OAuth Token (từ Codespace Secret)
 if [ -n "$GWORKSPACE_CREDENTIALS_JSON" ]; then

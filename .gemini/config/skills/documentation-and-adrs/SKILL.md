@@ -1,13 +1,6 @@
 ---
 name: documentation-and-adrs
-description: Records decisions and documentation. Use when making architectural decisions, changing public APIs, shipping features, or when you need to record context that future engineers and agents will need to understand the codebase.
-risk: critical
-source: https://github.com/addyosmani/agent-skills/tree/main/skills/documentation-and-adrs
-source_repo: addyosmani/agent-skills
-source_type: community
-date_added: 2026-07-01
-license: MIT
-license_source: https://github.com/addyosmani/agent-skills/blob/main/LICENSE
+description: Records decisions and documentation. Use when you need to document an architecture decision (ADR) or the reasoning behind a design choice, when changing public APIs, shipping features, or when you need to record context that future engineers and agents will need to understand the codebase.
 ---
 
 # Documentation and ADRs
@@ -40,9 +33,19 @@ ADRs capture the reasoning behind significant technical decisions. They're the h
 - Choosing between build tools, hosting platforms, or infrastructure
 - Any decision that would be expensive to reverse
 
+### Match the existing convention first
+
+Before creating an ADR, inspect the available repository context for an established convention — existing ADRs, project instructions, and ADR-related configuration or tooling (e.g. an `.adr-dir` file). An established convention overrides the defaults below. Match:
+
+- **Location and format** — e.g. `docs/adr/*.md`, `Documentation/Decisions/*.rst`, a MADR layout, or an `adr-tools` setup. Match the existing directory, file extension, and markup (Markdown vs reStructuredText).
+- **Numbering and naming** — continue the existing sequence and filename pattern (`ADR-004-Title.rst`, `0004-title.md`, …); don't restart at 001 or introduce a second scheme.
+- **Section headings** — reuse the project's heading set rather than imposing this template's.
+
+If the available evidence conflicts, surface the conflict rather than silently introducing another scheme. Only when no convention can be established do you apply the default below.
+
 ### ADR Template
 
-Store ADRs in `docs/decisions/` with sequential numbering:
+Store ADRs in `docs/decisions/` with sequential numbering (unless the project already uses another location — see above):
 
 ```markdown
 # ADR-001: Use PostgreSQL for primary database
@@ -283,9 +286,3 @@ After documenting:
 - [ ] Known gotchas are documented inline where they matter
 - [ ] No commented-out code remains
 - [ ] Rules files (CLAUDE.md etc.) are current and accurate
-
-## Limitations
-
-- Use this skill only when the task clearly matches its upstream source and local project context.
-- Verify commands, generated code, dependencies, credentials, and external service behavior before applying changes.
-- Do not treat examples as a substitute for environment-specific tests, security review, or user approval for destructive or costly actions.
