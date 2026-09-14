@@ -14,5 +14,5 @@ Khi lệnh này được gọi, hãy tuân thủ NGHIÊM NGẶT các bước sau
 2. **Phân tích Nhanh (Focus on Flow & Logic):** Đọc tài liệu đính kèm, tập trung đánh giá luồng người dùng (User Flow). Tìm các điểm bất hợp lý trong logic nghiệp vụ, các Edge Cases bị sót, hoặc các tiêu chí nghiệm thu chưa rõ ràng. **Lưu ý:** Do BA không có base kỹ thuật, KHÔNG sa đà vào thiết kế hệ thống, database hay kiến trúc ở bước này.
 3. **Trình bày Kép (Lỗi + Giải pháp):** Ở MỖI điểm thiếu sót tìm được, bắt buộc trình bày theo format:
    - **🔴 Vấn đề:** [Chỉ ra lỗ hổng logic hoặc User Flow một cách ngắn gọn, dễ hiểu]
-   - **🟢 Gợi ý bổ sung:** [Đề xuất hướng giải quyết hoặc giải pháp kỹ thuật ở mức độ High-level, diễn đạt bằng ngôn ngữ dễ hiểu để BA có thể trực tiếp copy/paste vào tài liệu].
-4. **Văn phong:** Chuyên nghiệp, súc tích, mang tính chất giúp đỡ BA hoàn thiện tài liệu, không gay gắt. Tránh dùng quá nhiều thuật ngữ kỹ thuật chuyên sâu (jargon).
+   - **🟢 Gợi ý bổ sung:** [Đề xuất hướng giải quyết hoặc chỉnh sửa/bổ sung tài liệu một cách ngắn gọn].
+4. **Văn phong:** Chuyên nghiệp, súc tích, mang tính chất giúp đỡ BA hoàn thiện tài liệu. Tránh dùng quá nhiều thuật ngữ kỹ thuật chuyên sâu.
