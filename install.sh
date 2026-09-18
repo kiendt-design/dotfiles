@@ -27,9 +27,34 @@ fi
 # 2. Cài đặt RTK (Rust Token Killer)
 if ! command -v rtk &> /dev/null; then
     echo "==> Installing RTK..."
-    # codespace chạy linux, pull binary rtk hoặc giả lập command
-    # Ở đây chúng ta tạo một alias hoặc tải từ resource (tạm mock vì chưa có URL release cụ thể)
-    echo "Requires manual RTK binary setup if not on cargo. Skipping strict install for now..."
+    if [[ "$OSTYPE" == "darwin"* ]] && command -v brew &> /dev/null; then
+        brew install rtk
+    else
+        echo "==> Downloading RTK binary for Linux..."
+        ARCH=$(uname -m)
+        RTK_URL=""
+        if [ "$ARCH" = "x86_64" ]; then
+            RTK_URL="https://github.com/rtk-ai/rtk/releases/latest/download/rtk-x86_64-unknown-linux-gnu.tar.gz"
+        elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+            RTK_URL="https://github.com/rtk-ai/rtk/releases/latest/download/rtk-aarch64-unknown-linux-gnu.tar.gz"
+        fi
+        
+        if [ -n "$RTK_URL" ]; then
+            mkdir -p "$HOME/.local/bin"
+            curl -sL "$RTK_URL" -o /tmp/rtk.tar.gz
+            if tar -tzf /tmp/rtk.tar.gz &>/dev/null; then
+                tar -xzf /tmp/rtk.tar.gz -C /tmp
+                mv /tmp/rtk "$HOME/.local/bin/rtk" 2>/dev/null || mv /tmp/rtk-*/rtk "$HOME/.local/bin/rtk" 2>/dev/null
+                chmod +x "$HOME/.local/bin/rtk"
+                echo "✅ RTK installed to ~/.local/bin/rtk"
+            else
+                echo "❌ Failed to download valid RTK archive from $RTK_URL"
+            fi
+            rm -rf /tmp/rtk.tar.gz /tmp/rtk*
+        else
+            echo "❌ Unsupported architecture for pre-built RTK binary: $ARCH"
+        fi
+    fi
 fi
 
 # 3. Inject PATH và Bash Aliases vào .bashrc và .zshrc
