@@ -34,9 +34,9 @@ if ! command -v rtk &> /dev/null; then
         ARCH=$(uname -m)
         RTK_URL=""
         if [ "$ARCH" = "x86_64" ]; then
-            RTK_URL="https://github.com/rtk-ai/rtk/releases/latest/download/rtk-x86_64-unknown-linux-gnu.tar.gz"
+            RTK_URL="https://github.com/rtk-ai/rtk/releases/latest/download/rtk-x86_64-unknown-linux-musl.tar.gz"
         elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
-            RTK_URL="https://github.com/rtk-ai/rtk/releases/latest/download/rtk-aarch64-unknown-linux-gnu.tar.gz"
+            RTK_URL="https://github.com/rtk-ai/rtk/releases/latest/download/rtk-aarch64-unknown-linux-musl.tar.gz"
         fi
         
         if [ -n "$RTK_URL" ]; then
